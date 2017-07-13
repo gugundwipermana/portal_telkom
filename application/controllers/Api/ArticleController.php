@@ -119,6 +119,51 @@ class ArticleController extends CI_Controller {
 
 
 
+	/**
+	 * ----------------------------------------------------------------------------
+	 * UPLOAD
+	 *
+	 */
+
+	public function upload()
+	{
+		$fileName = time().$_FILES['image_file']['name'];
+
+		// echo 'Nama file: '.$fileName.'<br/>';
+         
+        $config['upload_path'] = './assets/articles/';
+        $config['file_name'] = $fileName;
+        $config['allowed_types'] = 'jpg|gif|png|jpeg|JPG|PNG';
+        $config['max_size'] = 10000;
+         
+        $this->load->library('upload', $config);
+         
+        if ( ! $this->upload->do_upload('image_file'))
+        {
+        	$error = array('error' => $this->upload->display_errors());
+
+        	echo "<br/>".$this->upload->display_errors();
+        }
+             
+
+
+        $response = array(
+        	'url' => base_url().'/assets/articles/'.$fileName,
+        	'name' => $fileName
+        );
+
+        $this->output
+			 ->set_status_header(200)
+			 ->set_content_type('application/json', 'utf-8')
+			 ->set_output(json_encode($response, JSON_PRETTY_PRINT))
+			 ->_display();
+			 exit;
+
+    }
+
+
+
+
 
 
 
