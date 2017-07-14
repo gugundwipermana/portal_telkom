@@ -66,9 +66,9 @@ class UserController extends CI_Controller {
 
 		if($result) {
 			date_default_timezone_set('Europe/Bucharest');
-			$tw = date('Y') . (int)ceil(date('m')/3);
+			// $tw = date('Y') . (int)ceil(date('m')/3);
 
-			$response['token'] = 'Basic '.$this->getToken($username, $tw);
+			$response['token'] = 'Basic '.$this->getToken($username);
 		} else {
 			$response['errors'] = '{"type": "invalid"}';
 		}
@@ -81,11 +81,11 @@ class UserController extends CI_Controller {
 			 exit;
 	}
 
-	public function getToken($username, $tw)
+	public function getToken($username)
 	{
 		$token = array();
 		$token['username'] = $username;
-		$token['tw'] = $tw;
+		// $token['tw'] = $tw;
 
 		return  JWT::encode($token, 'token');
 	}
@@ -93,6 +93,52 @@ class UserController extends CI_Controller {
 
 
 
+
+
+
+
+
+	/**
+	 * ----------------------------------------------------------------------------
+	 * UPLOAD
+	 *
+	 */
+
+	public function upload()
+	{
+		$fileName = time().$_FILES['image_file']['name'];
+
+		// echo 'Nama file: '.$fileName.'<br/>';
+         
+        $config['upload_path'] = './assets/users/';
+        $config['file_name'] = $fileName;
+        $config['allowed_types'] = 'jpg|gif|png|jpeg|JPG|PNG';
+        $config['max_size'] = 10000;
+         
+        $this->load->library('upload', $config);
+         
+        if ( ! $this->upload->do_upload('image_file'))
+        {
+        	$error = array('error' => $this->upload->display_errors());
+
+        	echo "<br/>".$this->upload->display_errors();
+        }
+             
+
+
+        $response = array(
+        	'url' => base_url().'/assets/users/'.$fileName,
+        	'name' => $fileName
+        );
+
+        $this->output
+			 ->set_status_header(200)
+			 ->set_content_type('application/json', 'utf-8')
+			 ->set_output(json_encode($response, JSON_PRETTY_PRINT))
+			 ->_display();
+			 exit;
+
+    }
 
 
 
@@ -144,10 +190,10 @@ class UserController extends CI_Controller {
 			 exit;
 	}
 
-	public function delete($email)
+	public function delete($id)
 	{
 		$data_delete = array(
-			'EMAIL'		=> $email
+			'ID'		=> $id
 		);
 		$this->db->delete('B_USERS', $data_delete);
 

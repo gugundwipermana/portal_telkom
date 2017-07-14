@@ -294,7 +294,8 @@ class ArticleController extends CI_Controller {
 
 
 	// --------------------------------------------------------------------------------
-
+	// store sekalian update
+	
 	public function store_rate()
 	{
 		$input_data = json_decode(trim(file_get_contents('php://input')), true);
